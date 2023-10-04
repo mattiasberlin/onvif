@@ -22,7 +22,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/IOTechSystems/onvif"
+	"github.com/mattiasberlin/onvif"
 
 	"github.com/beevik/etree"
 	"github.com/google/uuid"

@@ -6,7 +6,7 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"github.com/IOTechSystems/onvif/xsd/onvif"
+	"github.com/mattiasberlin/onvif/xsd/onvif"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -14,10 +14,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/IOTechSystems/onvif/device"
-	"github.com/IOTechSystems/onvif/gosoap"
-	"github.com/IOTechSystems/onvif/networking"
 	"github.com/beevik/etree"
+	"github.com/mattiasberlin/onvif/device"
+	"github.com/mattiasberlin/onvif/gosoap"
+	"github.com/mattiasberlin/onvif/networking"
 )
 
 // Xlmns XML Scheam

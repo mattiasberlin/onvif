@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/IOTechSystems/onvif"
-	"github.com/IOTechSystems/onvif/event"
-	"github.com/IOTechSystems/onvif/xsd"
+	"github.com/mattiasberlin/onvif"
+	"github.com/mattiasberlin/onvif/event"
+	"github.com/mattiasberlin/onvif/xsd"
 	"io/ioutil"
 	"log"
 )

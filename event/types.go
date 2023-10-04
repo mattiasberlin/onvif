@@ -7,43 +7,43 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/IOTechSystems/onvif/event/topic"
-	"github.com/IOTechSystems/onvif/xsd"
 	mv "github.com/clbanning/mxj/v2"
+	"github.com/mattiasberlin/onvif/event/topic"
+	"github.com/mattiasberlin/onvif/xsd"
 )
 
-//Address Alias
+// Address Alias
 type Address xsd.String
 
-//CurrentTime alias
+// CurrentTime alias
 type CurrentTime xsd.DateTime //wsnt http://docs.oasis-open.org/wsn/b-2.xsd
-//TerminationTime alias
+// TerminationTime alias
 type TerminationTime xsd.DateTime //wsnt http://docs.oasis-open.org/wsn/b-2.xsd
-//FixedTopicSet alias
+// FixedTopicSet alias
 type FixedTopicSet xsd.Boolean //wsnt http://docs.oasis-open.org/wsn/b-2.xsd
 
-//Documentation alias
+// Documentation alias
 type Documentation xsd.AnyType //wstop http://docs.oasis-open.org/wsn/t-1.xsd
 
-//TopicExpressionDialect alias
+// TopicExpressionDialect alias
 type TopicExpressionDialect xsd.AnyURI
 
-//Message alias
+// Message alias
 type Message xsd.AnyType
 
-//ActionType for AttributedURIType
+// ActionType for AttributedURIType
 type ActionType AttributedURIType
 
-//AttributedURIType in ws-addr
+// AttributedURIType in ws-addr
 type AttributedURIType xsd.AnyURI //wsa https://www.w3.org/2005/08/addressing/ws-addr.xsd
 
-//AbsoluteOrRelativeTimeType <xsd:union memberTypes="xsd:dateTime xsd:duration"/>
+// AbsoluteOrRelativeTimeType <xsd:union memberTypes="xsd:dateTime xsd:duration"/>
 type AbsoluteOrRelativeTimeType struct { //wsnt http://docs.oasis-open.org/wsn/b-2.xsd
 	xsd.DateTime
 	xsd.Duration
 }
 
-//EndpointReferenceType in ws-addr
+// EndpointReferenceType in ws-addr
 type EndpointReferenceType struct { //wsa http://www.w3.org/2005/08/addressing/ws-addr.xsd
 	Address             AttributedURIType `xml:"wsa:Address"`
 	ReferenceParameters *ReferenceParametersType
@@ -56,24 +56,24 @@ type FilterType struct {
 	MessageContent  *QueryExpressionType `xml:"wsnt:MessageContent,omitempty"`
 }
 
-//EndpointReference alias
+// EndpointReference alias
 type EndpointReference EndpointReferenceType
 
-//ReferenceParametersType in ws-addr
+// ReferenceParametersType in ws-addr
 type ReferenceParametersType struct { //wsa https://www.w3.org/2005/08/addressing/ws-addr.xsd
 	//Here can be anyAttribute
 }
 
-//Metadata in ws-addr
+// Metadata in ws-addr
 type Metadata MetadataType //wsa https://www.w3.org/2005/08/addressing/ws-addr.xsd
 
-//MetadataType in ws-addr
+// MetadataType in ws-addr
 type MetadataType struct { //wsa https://www.w3.org/2005/08/addressing/ws-addr.xsd
 
 	//Here can be anyAttribute
 }
 
-//TopicSet alias
+// TopicSet alias
 type TopicSet map[string]interface{} //wstop http://docs.oasis-open.org/wsn/t-1.xsd
 
 type Node struct {
@@ -99,7 +99,7 @@ func (n *TopicSet) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return nil
 }
 
-//TopicSetType alias
+// TopicSetType alias
 type TopicSetType struct { //wstop http://docs.oasis-open.org/wsn/t-1.xsd
 	//ExtensibleDocumented
 
@@ -107,19 +107,19 @@ type TopicSetType struct { //wstop http://docs.oasis-open.org/wsn/t-1.xsd
 	RuleEngine *topic.RuleEngine `json:"tns:RuleEngine,omitempty" xml:",omitempty"`
 }
 
-//ExtensibleDocumented struct
+// ExtensibleDocumented struct
 type ExtensibleDocumented struct { //wstop http://docs.oasis-open.org/wsn/t-1.xsd
 	Documentation Documentation //к xsd-документе documentation с маленькой буквы начинается
 	//here can be anyAttribute
 }
 
-//ProducerReference Alias
+// ProducerReference Alias
 type ProducerReference EndpointReferenceType
 
-//SubscriptionReference Alias
+// SubscriptionReference Alias
 type SubscriptionReference EndpointReferenceType
 
-//NotificationMessageHolderType Alias
+// NotificationMessageHolderType Alias
 type NotificationMessageHolderType struct {
 	SubscriptionReference SubscriptionReference //wsnt http://docs.oasis-open.org/wsn/b-2.xsd
 	Topic                 Topic
@@ -150,26 +150,26 @@ type SimpleItem struct {
 	Value xsd.AnyType `xml:"Value,attr"`
 }
 
-//NotificationMessage Alias
+// NotificationMessage Alias
 type NotificationMessage NotificationMessageHolderType //wsnt http://docs.oasis-open.org/wsn/b-2.xsd
 
-//QueryExpressionType struct for wsnt:MessageContent
+// QueryExpressionType struct for wsnt:MessageContent
 type QueryExpressionType struct { //wsnt http://docs.oasis-open.org/wsn/b-2.xsd
 	MessageKind xsd.String `xml:",chardata"` // boolean(ncex:Producer="15")
 }
 
-//MessageContentType Alias
+// MessageContentType Alias
 type MessageContentType QueryExpressionType
 
-//QueryExpression Alias
+// QueryExpression Alias
 type QueryExpression QueryExpressionType
 
-//TopicExpressionType struct for wsnt:TopicExpression
+// TopicExpressionType struct for wsnt:TopicExpression
 type TopicExpressionType struct { //wsnt http://docs.oasis-open.org/wsn/b-2.xsd
 	TopicKinds xsd.String `xml:",chardata"`
 }
 
-//Topic Alias
+// Topic Alias
 type Topic TopicExpressionType
 
 // Capabilities of event
@@ -182,71 +182,71 @@ type Capabilities struct { //tev
 	PersistentNotificationStorage                 xsd.Boolean `xml:"PersistentNotificationStorage,attr"`
 }
 
-//ResourceUnknownFault response type
+// ResourceUnknownFault response type
 type ResourceUnknownFault struct {
 }
 
-//InvalidFilterFault response type
+// InvalidFilterFault response type
 type InvalidFilterFault struct {
 }
 
-//TopicExpressionDialectUnknownFault response type
+// TopicExpressionDialectUnknownFault response type
 type TopicExpressionDialectUnknownFault struct {
 }
 
-//InvalidTopicExpressionFault response type
+// InvalidTopicExpressionFault response type
 type InvalidTopicExpressionFault struct {
 }
 
-//TopicNotSupportedFault response type
+// TopicNotSupportedFault response type
 type TopicNotSupportedFault struct {
 }
 
-//InvalidProducerPropertiesExpressionFault response type
+// InvalidProducerPropertiesExpressionFault response type
 type InvalidProducerPropertiesExpressionFault struct {
 }
 
-//InvalidMessageContentExpressionFault response type
+// InvalidMessageContentExpressionFault response type
 type InvalidMessageContentExpressionFault struct {
 }
 
-//UnacceptableInitialTerminationTimeFault response type
+// UnacceptableInitialTerminationTimeFault response type
 type UnacceptableInitialTerminationTimeFault struct {
 }
 
-//UnrecognizedPolicyRequestFault response type
+// UnrecognizedPolicyRequestFault response type
 type UnrecognizedPolicyRequestFault struct {
 }
 
-//UnsupportedPolicyRequestFault response type
+// UnsupportedPolicyRequestFault response type
 type UnsupportedPolicyRequestFault struct {
 }
 
-//NotifyMessageNotSupportedFault response type
+// NotifyMessageNotSupportedFault response type
 type NotifyMessageNotSupportedFault struct {
 }
 
-//SubscribeCreationFailedFault response type
+// SubscribeCreationFailedFault response type
 type SubscribeCreationFailedFault struct {
 }
 
-//GetServiceCapabilities action
+// GetServiceCapabilities action
 type GetServiceCapabilities struct {
 	XMLName string `xml:"tev:GetServiceCapabilities"`
 }
 
-//GetServiceCapabilitiesResponse type
+// GetServiceCapabilitiesResponse type
 type GetServiceCapabilitiesResponse struct {
 	Capabilities Capabilities
 }
 
-//SubscriptionPolicy action
+// SubscriptionPolicy action
 type SubscriptionPolicy struct { //tev http://www.onvif.org/ver10/events/wsdl
 	ChangedOnly xsd.Boolean `xml:"ChangedOnly,attr"`
 	string
 }
 
-//Subscribe action for subscribe event topic
+// Subscribe action for subscribe event topic
 type Subscribe struct { //http://docs.oasis-open.org/wsn/b-2.xsd
 	XMLName            struct{}               `xml:"wsnt:Subscribe"`
 	ConsumerReference  *EndpointReferenceType `xml:"wsnt:ConsumerReference"`
@@ -255,38 +255,38 @@ type Subscribe struct { //http://docs.oasis-open.org/wsn/b-2.xsd
 	TerminationTime    *xsd.String            `xml:"wsnt:TerminationTime"`
 }
 
-//SubscribeResponse message for subscribe event topic
+// SubscribeResponse message for subscribe event topic
 type SubscribeResponse struct { //http://docs.oasis-open.org/wsn/b-2.xsd
 	SubscriptionReference SubscriptionReferenceResponse
 	CurrentTime           *xsd.String
 	TerminationTime       *xsd.String
 }
 
-//Renew action for refresh event topic subscription
+// Renew action for refresh event topic subscription
 type Renew struct { //http://docs.oasis-open.org/wsn/b-2.xsd
 	XMLName         string     `xml:"wsnt:Renew"`
 	TerminationTime xsd.String `xml:"wsnt:TerminationTime"`
 }
 
-//RenewResponse for Renew action
+// RenewResponse for Renew action
 type RenewResponse struct { //http://docs.oasis-open.org/wsn/b-2.xsd
 	TerminationTime TerminationTime `xml:"wsnt:TerminationTime"`
 	CurrentTime     CurrentTime     `xml:"wsnt:CurrentTime"`
 }
 
-//Unsubscribe action for Unsubscribe event topic
+// Unsubscribe action for Unsubscribe event topic
 type Unsubscribe struct { //http://docs.oasis-open.org/wsn/b-2.xsd
 	XMLName string `xml:"tev:Unsubscribe"`
 	Any     string
 }
 
-//UnsubscribeResponse message for Unsubscribe event topic
+// UnsubscribeResponse message for Unsubscribe event topic
 type UnsubscribeResponse struct { //http://docs.oasis-open.org/wsn/b-2.xsd
 	Any string
 }
 
-//CreatePullPointSubscription action
-//BUG(r) Bad AbsoluteOrRelativeTimeType type
+// CreatePullPointSubscription action
+// BUG(r) Bad AbsoluteOrRelativeTimeType type
 type CreatePullPointSubscription struct {
 	XMLName                string      `xml:"tev:CreatePullPointSubscription,omitempty"`
 	Filter                 *FilterType `xml:"tev:Filter,omitempty"`
@@ -294,7 +294,7 @@ type CreatePullPointSubscription struct {
 	SubscriptionPolicy     *xsd.String `xml:"tev:SubscriptionPolicy,omitempty"`
 }
 
-//CreatePullPointSubscriptionResponse action
+// CreatePullPointSubscriptionResponse action
 type CreatePullPointSubscriptionResponse struct {
 	SubscriptionReference SubscriptionReferenceResponse
 	CurrentTime           CurrentTime
@@ -307,12 +307,12 @@ type SubscriptionReferenceResponse struct {
 	Metadata            *MetadataType
 }
 
-//GetEventProperties action
+// GetEventProperties action
 type GetEventProperties struct {
 	XMLName string `xml:"tev:GetEventProperties"`
 }
 
-//GetEventPropertiesResponse action
+// GetEventPropertiesResponse action
 type GetEventPropertiesResponse struct {
 	TopicNamespaceLocation          *xsd.AnyURI             `json:",omitempty" xml:",omitempty"`
 	FixedTopicSet                   *FixedTopicSet          `json:",omitempty" xml:",omitempty"`
@@ -325,43 +325,43 @@ type GetEventPropertiesResponse struct {
 
 //Port type PullPointSubscription
 
-//PullMessages Action
+// PullMessages Action
 type PullMessages struct {
 	XMLName      string       `xml:"tev:PullMessages"`
 	Timeout      xsd.Duration `xml:"tev:Timeout"`
 	MessageLimit xsd.Int      `xml:"tev:MessageLimit"`
 }
 
-//PullMessagesResponse response type
+// PullMessagesResponse response type
 type PullMessagesResponse struct {
 	CurrentTime         *xsd.String           `json:",omitempty" xml:",omitempty"`
 	TerminationTime     *xsd.String           `json:",omitempty" xml:",omitempty"`
 	NotificationMessage []NotificationMessage `json:",omitempty" xml:",omitempty"`
 }
 
-//PullMessagesFaultResponse response type
+// PullMessagesFaultResponse response type
 type PullMessagesFaultResponse struct {
 	MaxTimeout      xsd.Duration
 	MaxMessageLimit xsd.Int
 }
 
-//Seek action
+// Seek action
 type Seek struct {
 	XMLName string       `xml:"tev:Seek"`
 	UtcTime xsd.DateTime `xml:"tev:UtcTime"`
 	Reverse xsd.Boolean  `xml:"tev:Reverse"`
 }
 
-//SeekResponse action
+// SeekResponse action
 type SeekResponse struct {
 }
 
-//SetSynchronizationPoint action
+// SetSynchronizationPoint action
 type SetSynchronizationPoint struct {
 	XMLName string `xml:"tev:SetSynchronizationPoint"`
 }
 
-//SetSynchronizationPointResponse action
+// SetSynchronizationPointResponse action
 type SetSynchronizationPointResponse struct {
 }
 

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/IOTechSystems/onvif"
-	"github.com/IOTechSystems/onvif/device"
+	"github.com/mattiasberlin/onvif"
+	"github.com/mattiasberlin/onvif/device"
 	"io/ioutil"
 	"log"
 )
