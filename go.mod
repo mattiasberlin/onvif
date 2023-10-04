@@ -3,7 +3,6 @@ module github.com/mattiasberlin/onvif
 go 1.20
 
 require (
-	github.com/mattiasberlin/onvif v0.1.6
 	github.com/beevik/etree v1.1.0
 	github.com/clbanning/mxj/v2 v2.3.2
 	github.com/elgs/gostrgen v0.0.0-20161222160715-9d61ae07eeae
