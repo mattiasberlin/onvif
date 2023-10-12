@@ -35,19 +35,21 @@ const (
 
 // GetAvailableDevicesAtSpecificEthernetInterface sends a ws-discovery Probe Message via
 // UDP multicast to Discover NVT type Devices
-func GetAvailableDevicesAtSpecificEthernetInterface(interfaceName string) []onvif.Device {
+func GetAvailableDevicesAtSpecificEthernetInterface(interfaceName string) ([]onvif.Device, error) {
 	types := []string{"dn:NetworkVideoTransmitter"}
 	namespaces := map[string]string{"dn": "http://www.onvif.org/ver10/network/wsdl", "ds": "http://www.onvif.org/ver10/device/wsdl"}
 
-	probeResponses := SendProbe(interfaceName, nil, types, namespaces)
-
-	nvtDevices := make([]onvif.Device, 0)
-	nvtDevices, err := DevicesFromProbeResponses(probeResponses)
+	probeResponses, err := SendProbe(interfaceName, nil, types, namespaces)
 	if err != nil {
-		fmt.Printf("Failed to discover Onvif camera: %s\n", err.Error())
+		return nil, fmt.Errorf("failed to probe: %w", err)
 	}
 
-	return nvtDevices
+	nvtDevices, err := DevicesFromProbeResponses(probeResponses)
+	if err != nil {
+		return nil, fmt.Errorf("failed to discover Onvif camera: %w", err)
+	}
+
+	return nvtDevices, nil
 }
 
 func DevicesFromProbeResponses(probeResponses []string) ([]onvif.Device, error) {
@@ -65,13 +67,11 @@ func DevicesFromProbeResponses(probeResponses []string) ([]onvif.Device, error) 
 			if address := probeMatch.FindElement("./XAddrs"); address != nil {
 				u, err := url.Parse(address.Text())
 				if err != nil {
-					fmt.Printf("Invalid XAddrs: %s\n", address.Text())
 					continue
 				}
 				xaddr = u.Host
 			}
 			if _, dupe := xaddrSet[xaddr]; dupe {
-				fmt.Printf("Skipping duplicate XAddr: %s\n", xaddr)
 				continue
 			}
 
@@ -85,16 +85,22 @@ func DevicesFromProbeResponses(probeResponses []string) ([]onvif.Device, error) 
 				Xaddr:              xaddr,
 				EndpointRefAddress: endpointRefAddress,
 				HttpClient: &http.Client{
-					Timeout: 2 * time.Second,
+					Timeout: 2 * time.Second, // TODO: Dangerously low, but this is also done sequentially.
 				},
 			})
 			if err != nil {
-				fmt.Printf("Failed to connect to camera at %s: %s\n", xaddr, err.Error())
 				continue
 			}
+
+			var scopes []string
+			ref := probeMatch.FindElement("./Scopes")
+			if ref != nil {
+				scopes = strings.Split(ref.Text(), " ")
+			}
+			dev.SetDeviceInfoFromScopes(scopes)
+
 			xaddrSet[xaddr] = struct{}{}
 			nvtDevices = append(nvtDevices, *dev)
-			fmt.Printf("Onvif WS-Discovery: Find Xaddr: %-25s EndpointRefAddress: %s\n", xaddr, string(endpointRefAddress))
 		}
 	}
 
@@ -102,18 +108,18 @@ func DevicesFromProbeResponses(probeResponses []string) ([]onvif.Device, error) 
 }
 
 // SendProbe to device
-func SendProbe(interfaceName string, scopes, types []string, namespaces map[string]string) []string {
+func SendProbe(interfaceName string, scopes, types []string, namespaces map[string]string) ([]string, error) {
 	probeSOAP := BuildProbeMessage(uuid.NewString(), scopes, types, namespaces)
 	return SendUDPMulticast(probeSOAP.String(), interfaceName)
 }
 
-func SendUDPMulticast(msg string, interfaceName string) []string {
+func SendUDPMulticast(msg string, interfaceName string) ([]string, error) {
 	var responses []string
 	data := []byte(msg)
 
 	c, err := net.ListenPacket("udp4", "0.0.0.0:0")
 	if err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
 	defer c.Close()
 
@@ -129,28 +135,27 @@ func SendUDPMulticast(msg string, interfaceName string) []string {
 	} else {
 		iface, err = net.InterfaceByName(interfaceName)
 		if err != nil {
-			fmt.Printf("Error calling InterfaceByName for interface %q: %s\n", interfaceName, err.Error())
+			return nil, fmt.Errorf("failed to call InterfaceByName for interface %q: %w", interfaceName, err)
 		}
 	}
 
 	if err = p.JoinGroup(iface, &net.UDPAddr{IP: group}); err != nil {
-		fmt.Printf("Error calling JoinGroup for ws-discovery: %s\n", err.Error())
+		return nil, fmt.Errorf("failed to JoinGroup for ws-discovery: %w", err)
 	}
 	if iface != nil {
 		if err = p.SetMulticastInterface(iface); err != nil {
-			fmt.Printf("Error calling SetMulticastInterface for interface %q: %s\n", interfaceName, err.Error())
+			return nil, fmt.Errorf("failed to SetMulticastInterface for interface %q: %w", interfaceName, err)
 		}
 		if err = p.SetMulticastTTL(2); err != nil {
-			fmt.Printf("Error calling SetMulticastTTL: %s\n", err.Error())
+			return nil, fmt.Errorf("failed to SetMulticastTTL: %w", err)
 		}
 	}
 	if _, err = p.WriteTo(data, nil, dest); err != nil {
-		fmt.Printf("Error writing to ws-discovery multicast address %s: %s\n", dest.String(), err.Error())
+		return nil, fmt.Errorf("failed to write to ws-discovery multicast address %s: %w", dest.String(), err)
 	}
 
 	if err = p.SetReadDeadline(time.Now().Add(time.Second * 1)); err != nil {
-		fmt.Printf("Error setting read deadline: %s\n", err.Error())
-		return nil
+		return nil, fmt.Errorf("failed to set read deadline: %w", err)
 	}
 
 	b := make([]byte, bufSize)
@@ -161,11 +166,11 @@ func SendUDPMulticast(msg string, interfaceName string) []string {
 		if err != nil {
 			// ErrDeadlineExceeded is expected once the read timeout is expired
 			if !errors.Is(err, os.ErrDeadlineExceeded) {
-				fmt.Printf("Unexpected error occurred while reading ws-discovery responses: %s\n", err.Error())
+				return nil, fmt.Errorf("unexpected error occurred while reading ws-discovery responses: %w", err)
 			}
 			break
 		}
 		responses = append(responses, string(b[0:n]))
 	}
-	return responses
+	return responses, nil
 }
