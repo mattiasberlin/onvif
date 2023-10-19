@@ -22,10 +22,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mattiasberlin/onvif"
-
 	"github.com/beevik/etree"
 	"github.com/google/uuid"
+	"github.com/mattiasberlin/onvif"
 	"golang.org/x/net/ipv4"
 )
 
@@ -46,7 +45,7 @@ func GetAvailableDevicesAtSpecificEthernetInterface(interfaceName string) ([]onv
 
 	nvtDevices, err := DevicesFromProbeResponses(probeResponses)
 	if err != nil {
-		return nil, fmt.Errorf("failed to discover Onvif camera: %w", err)
+		return nil, fmt.Errorf("failed to discover Onvif devices: %w", err)
 	}
 
 	return nvtDevices, nil
@@ -63,6 +62,8 @@ func DevicesFromProbeResponses(probeResponses []string) ([]onvif.Device, error) 
 
 		probeMatches := doc.Root().FindElements("./Body/ProbeMatches/ProbeMatch")
 		for _, probeMatch := range probeMatches {
+			// TODO: All this should be done in goroutines
+
 			var xaddr string
 			if address := probeMatch.FindElement("./XAddrs"); address != nil {
 				u, err := url.Parse(address.Text())
