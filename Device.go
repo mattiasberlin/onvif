@@ -13,12 +13,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/mattiasberlin/onvif/xsd/onvif"
-
 	"github.com/beevik/etree"
 	"github.com/mattiasberlin/onvif/device"
 	"github.com/mattiasberlin/onvif/gosoap"
 	"github.com/mattiasberlin/onvif/networking"
+	"github.com/mattiasberlin/onvif/xsd/onvif"
 )
 
 // Xlmns XML Scheam
@@ -170,16 +169,23 @@ func NewDevice(params DeviceParams) (*Device, error) {
 	}
 	dev.digestClient = NewDigestClient(dev.params.HttpClient, dev.params.Username, dev.params.Password)
 
+	return dev, nil
+}
+
+// GetSupportedServices from the device and set the supported endpoints.
+func (dev *Device) GetSupportedServices() error {
 	getCapabilities := device.GetCapabilities{Category: []onvif.CapabilityCategory{"All"}}
 
 	resp, err := dev.CallMethod(getCapabilities)
-
-	if err != nil || resp.StatusCode != http.StatusOK {
-		return nil, errors.New("camera is not available at " + dev.params.Xaddr + " or it does not support ONVIF services")
+	if err != nil {
+		return fmt.Errorf("camera is not available at %s or it does not support ONVIF services: %w", dev.params.Xaddr, err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("unexpected status %s", resp.Status)
 	}
 
 	dev.getSupportedServices(resp)
-	return dev, nil
+	return nil
 }
 
 func (dev *Device) addEndpoint(Key, Value string) {
