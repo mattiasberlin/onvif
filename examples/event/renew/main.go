@@ -2,11 +2,12 @@ package main
 
 import (
 	"encoding/xml"
+	"io"
+	"log"
+
 	"github.com/mattiasberlin/onvif"
 	"github.com/mattiasberlin/onvif/event"
 	"github.com/mattiasberlin/onvif/xsd"
-	"io/ioutil"
-	"log"
 )
 
 // === Geovision ===
@@ -60,7 +61,7 @@ import (
 // 1. the subscription's termination time will update if the request's TerminationTime greater than the curren time
 
 func main() {
-	dev, err := onvif.NewDevice(onvif.DeviceParams{
+	dev := onvif.NewDevice(onvif.DeviceParams{
 		Xaddr: "192.168.12.148", // BOSCH
 		//Xaddr:    "192.168.12.149", // Geovision
 		//Xaddr: "192.168.12.123", //Hikvision
@@ -68,8 +69,9 @@ func main() {
 		Password: "Password1!",
 		AuthMode: onvif.UsernameTokenAuth,
 	})
+	err := dev.GetSupportedServices()
 	if err != nil {
-		log.Fatalln("fail to new device:", err)
+		log.Fatalln("fail to get supported services:", err)
 	}
 
 	terminationTime := xsd.String("PT120S")
@@ -88,7 +90,7 @@ func main() {
 	if err != nil {
 		log.Fatalln("fail to CallMethod:", err)
 	}
-	bs, _ := ioutil.ReadAll(res.Body)
+	bs, _ := io.ReadAll(res.Body)
 
 	log.Printf(">> Result: %+v \n %s", res.StatusCode, bs)
 }

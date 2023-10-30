@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/mattiasberlin/onvif"
@@ -34,7 +34,7 @@ func RunApi() {
 		if err != nil {
 			fmt.Println(err)
 		}
-		dev, err := onvif.NewDevice(onvif.DeviceParams{
+		dev := onvif.NewDevice(onvif.DeviceParams{
 			Xaddr:    xaddr,
 			Username: username,
 			Password: pass,
@@ -84,7 +84,7 @@ func CallOnvifFunction(dev *onvif.Device, serviceName, functionName, acceptedDat
 		return "", err
 	}
 
-	rsp, err := ioutil.ReadAll(servResp.Body)
+	rsp, err := io.ReadAll(servResp.Body)
 	if err != nil {
 		return "", err
 	}

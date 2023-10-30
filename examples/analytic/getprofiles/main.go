@@ -1,28 +1,30 @@
 package main
 
 import (
+	"io"
+	"log"
+
 	"github.com/mattiasberlin/onvif"
 	"github.com/mattiasberlin/onvif/media2"
-	"io/ioutil"
-	"log"
 )
 
 func main() {
-	dev, err := onvif.NewDevice(onvif.DeviceParams{
+	dev := onvif.NewDevice(onvif.DeviceParams{
 		Xaddr:    "192.168.12.148", // BOSCH
 		Username: "administrator",
 		Password: "Password1!",
 		AuthMode: onvif.UsernameTokenAuth,
 	})
+	err := dev.GetSupportedServices()
 	if err != nil {
-		log.Fatalln("fail to new device:", err)
+		log.Fatalln("fail to get supported services:", err)
 	}
 
 	res, err := dev.CallMethod(media2.GetProfiles{})
 	if err != nil {
 		log.Fatalln("fail to CallMethod:", err)
 	}
-	bs, _ := ioutil.ReadAll(res.Body)
+	bs, _ := io.ReadAll(res.Body)
 
 	log.Printf(">> Result: %+v \n %s", res.StatusCode, bs)
 }

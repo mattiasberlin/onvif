@@ -158,7 +158,7 @@ func (dev *Device) getSupportedServices(resp *http.Response) {
 }
 
 // NewDevice function construct a ONVIF Device entity
-func NewDevice(params DeviceParams) (*Device, error) {
+func NewDevice(params DeviceParams) *Device {
 	dev := new(Device)
 	dev.params = params
 	dev.endpoints = make(map[string]string)
@@ -169,7 +169,7 @@ func NewDevice(params DeviceParams) (*Device, error) {
 	}
 	dev.digestClient = NewDigestClient(dev.params.HttpClient, dev.params.Username, dev.params.Password)
 
-	return dev, nil
+	return dev
 }
 
 // GetSupportedServices from the device and set the supported endpoints.

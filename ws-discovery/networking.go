@@ -59,11 +59,8 @@ func DevicesFromProbeResponses(probeResponses []string) ([]onvif.Device, error) 
 		if err := doc.ReadFromString(j); err != nil {
 			return nil, err
 		}
-
 		probeMatches := doc.Root().FindElements("./Body/ProbeMatches/ProbeMatch")
 		for _, probeMatch := range probeMatches {
-			// TODO: All this should be done in goroutines
-
 			var xaddr string
 			if address := probeMatch.FindElement("./XAddrs"); address != nil {
 				u, err := url.Parse(address.Text())
@@ -82,16 +79,13 @@ func DevicesFromProbeResponses(probeResponses []string) ([]onvif.Device, error) 
 				endpointRefAddress = uuidElements[len(uuidElements)-1]
 			}
 
-			dev, err := onvif.NewDevice(onvif.DeviceParams{
+			dev := onvif.NewDevice(onvif.DeviceParams{
 				Xaddr:              xaddr,
 				EndpointRefAddress: endpointRefAddress,
 				HttpClient: &http.Client{
 					Timeout: 2 * time.Second, // TODO: Dangerously low, but this is also done sequentially.
 				},
 			})
-			if err != nil {
-				continue
-			}
 
 			var scopes []string
 			ref := probeMatch.FindElement("./Scopes")

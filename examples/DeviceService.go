@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 
@@ -18,7 +18,7 @@ const (
 )
 
 func readResponse(resp *http.Response) string {
-	b, err := ioutil.ReadAll(resp.Body)
+	b, err := io.ReadAll(resp.Body)
 	if err != nil {
 		panic(err)
 	}
@@ -26,16 +26,13 @@ func readResponse(resp *http.Response) string {
 }
 
 func main() {
-	//Getting an camera instance
-	dev, err := goonvif.NewDevice(goonvif.DeviceParams{
+	// Getting a camera instance
+	dev := goonvif.NewDevice(goonvif.DeviceParams{
 		Xaddr:      "192.168.13.14:80",
 		Username:   login,
 		Password:   password,
 		HttpClient: new(http.Client),
 	})
-	if err != nil {
-		panic(err)
-	}
 
 	//Preparing commands
 	UserLevel := onvif.UserLevel("User")
