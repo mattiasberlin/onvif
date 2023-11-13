@@ -9,18 +9,22 @@ import (
 	"github.com/elgs/gostrgen"
 )
 
-/*************************
+/*
+************************
+
 	WS-Security types
-*************************/
+
+************************
+*/
 const (
 	passwordType = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordDigest"
 	encodingType = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary"
 )
 
-//Security type :XMLName xml.Name `xml:"http://purl.org/rss/1.0/modules/content/ encoded"`
+// Security type :XMLName xml.Name `xml:"http://purl.org/rss/1.0/modules/content/ encoded"`
 type Security struct {
 	//XMLName xml.Name  `xml:"wsse:Security"`
-	XMLName xml.Name `xml:"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd Security"`
+	XMLName xml.Name `xml:"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd wsse:Security"`
 	Auth    wsAuth
 }
 
@@ -37,11 +41,11 @@ type nonce struct {
 }
 
 type wsAuth struct {
-	XMLName  xml.Name `xml:"UsernameToken"`
-	Username string   `xml:"Username"`
-	Password password `xml:"Password"`
-	Nonce    nonce    `xml:"Nonce"`
-	Created  string   `xml:"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd Created"`
+	XMLName  xml.Name `xml:"wsse:UsernameToken"`
+	Username string   `xml:"wsse:Username"`
+	Password password `xml:"wsse:Password"`
+	Nonce    nonce    `xml:"wsse:Nonce"`
+	Created  string   `xml:"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd wsu:Created"`
 }
 
 /*
@@ -55,7 +59,7 @@ type wsAuth struct {
    </Security>
 */
 
-//NewSecurity get a new security
+// NewSecurity get a new security
 func NewSecurity(username, passwd string) Security {
 	/** Generating Nonce sequence **/
 	charsToGenerate := 32
@@ -81,7 +85,7 @@ func NewSecurity(username, passwd string) Security {
 	return auth
 }
 
-//Digest = B64ENCODE( SHA1( B64DECODE( Nonce ) + Date + Password ) )
+// Digest = B64ENCODE( SHA1( B64DECODE( Nonce ) + Date + Password ) )
 func generateToken(Username string, Nonce string, Created string, Password string) string {
 	sDec, _ := base64.StdEncoding.DecodeString(Nonce)
 
