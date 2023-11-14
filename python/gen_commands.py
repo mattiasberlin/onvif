@@ -5,7 +5,6 @@ import pathlib
 import re
 import subprocess
 
-
 # license header to use for generated go files
 HEADER = '''\
 // -*- Mode: Go; indent-tabs-mode: t -*-
@@ -18,7 +17,7 @@ HEADER = '''\
 
 '''
 
-BASE_MODULE_NAME = 'github.com/mattiasberlin/onvif'
+BASE_MODULE_NAME = 'github.com/IOTechSystems/onvif'
 
 SERVICE_NAMES = [
     'analytics',

@@ -5,8 +5,8 @@ import (
 	"io"
 	"log"
 
-	"github.com/mattiasberlin/onvif"
-	"github.com/mattiasberlin/onvif/event"
+	"github.com/IOTechSystems/onvif"
+	"github.com/IOTechSystems/onvif/event"
 )
 
 // === Geovision ===

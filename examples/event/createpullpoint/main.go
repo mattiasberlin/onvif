@@ -4,9 +4,9 @@ import (
 	"io"
 	"log"
 
-	"github.com/mattiasberlin/onvif"
-	"github.com/mattiasberlin/onvif/event"
-	"github.com/mattiasberlin/onvif/xsd"
+	"github.com/IOTechSystems/onvif"
+	"github.com/IOTechSystems/onvif/event"
+	"github.com/IOTechSystems/onvif/xsd"
 )
 
 // Geovision

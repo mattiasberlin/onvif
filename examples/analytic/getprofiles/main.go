@@ -4,8 +4,8 @@ import (
 	"io"
 	"log"
 
-	"github.com/mattiasberlin/onvif"
-	"github.com/mattiasberlin/onvif/media2"
+	"github.com/IOTechSystems/onvif"
+	"github.com/IOTechSystems/onvif/media2"
 )
 
 func main() {
