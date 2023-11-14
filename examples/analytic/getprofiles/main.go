@@ -17,12 +17,12 @@ func main() {
 	})
 	err := dev.GetSupportedServices()
 	if err != nil {
-		log.Fatalln("fail to get supported services:", err)
+		log.Fatalln("failed to get supported services:", err)
 	}
 
 	res, err := dev.CallMethod(media2.GetProfiles{})
 	if err != nil {
-		log.Fatalln("fail to CallMethod:", err)
+		log.Fatalln("failed to CallMethod:", err)
 	}
 	bs, _ := io.ReadAll(res.Body)
 

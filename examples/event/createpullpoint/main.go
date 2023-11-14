@@ -75,7 +75,7 @@ func main() {
 	})
 	err := dev.GetSupportedServices()
 	if err != nil {
-		log.Fatalf("Failed to get supported services: %v", err)
+		log.Fatalln("Failed to get supported services:", err)
 	}
 
 	initialTerminationTime := xsd.String("PT120S")

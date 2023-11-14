@@ -48,12 +48,11 @@ import (
 //
 // Response:
 // <tev:PullMessagesResponse><tev:CurrentTime>2021-12-02T06:08:35Z</tev:CurrentTime>
-//
-//	 <tev:TerminationTime>2021-12-02T06:18:40Z</tev:TerminationTime>
-//	  <wsnt:NotificationMessage><wsnt:Topic Dialect="http://www.onvif.org/ver10/tev/topicExpression/ConcreteSet">tns1:RuleEngine/CellMotionDetector/Motion</wsnt:Topic>
-//	   ...
-//	  </wsnt:NotificationMessage>
-//	</tev:PullMessagesResponse>
+//   <tev:TerminationTime>2021-12-02T06:18:40Z</tev:TerminationTime>
+//    <wsnt:NotificationMessage><wsnt:Topic Dialect="http://www.onvif.org/ver10/tev/topicExpression/ConcreteSet">tns1:RuleEngine/CellMotionDetector/Motion</wsnt:Topic>
+//     ...
+//    </wsnt:NotificationMessage>
+//  </tev:PullMessagesResponse>
 //
 // Test Summary:
 //
@@ -69,7 +68,7 @@ func main() {
 	})
 	err := dev.GetSupportedServices()
 	if err != nil {
-		log.Fatalln("fail to get supported services:", err)
+		log.Fatalln("failed to get supported services:", err)
 	}
 
 	pullMessage := event.PullMessages{
@@ -86,7 +85,7 @@ func main() {
 	}
 	res, err := dev.SendSoap(endPoint, string(requestBody))
 	if err != nil {
-		log.Fatalln("fail to CallMethod:", err)
+		log.Fatalln("failed to CallMethod:", err)
 	}
 	bs, _ := io.ReadAll(res.Body)
 

@@ -1,0 +1,7 @@
+{
+  "editor.tabSize": 2,
+  "go.formatTool": "goimports",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true
+  },
+}
