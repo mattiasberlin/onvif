@@ -83,7 +83,7 @@ func DevicesFromProbeResponses(probeResponses []string) ([]onvif.Device, error) 
 				Xaddr:              xaddr,
 				EndpointRefAddress: endpointRefAddress,
 				HttpClient: &http.Client{
-					Timeout: 2 * time.Second, // TODO: Dangerously low, but this is also done sequentially.
+					Timeout: 2 * time.Second,
 				},
 			})
 
