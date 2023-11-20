@@ -24,7 +24,7 @@ const (
 // Security type :XMLName xml.Name `xml:"http://purl.org/rss/1.0/modules/content/ encoded"`
 type Security struct {
 	//XMLName xml.Name  `xml:"wsse:Security"`
-	XMLName xml.Name `xml:"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd wsse:Security"`
+	XMLName xml.Name `xml:"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd Security"`
 	Auth    wsAuth
 }
 
@@ -41,11 +41,11 @@ type nonce struct {
 }
 
 type wsAuth struct {
-	XMLName  xml.Name `xml:"wsse:UsernameToken"`
-	Username string   `xml:"wsse:Username"`
-	Password password `xml:"wsse:Password"`
-	Nonce    nonce    `xml:"wsse:Nonce"`
-	Created  string   `xml:"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd wsu:Created"`
+	XMLName  xml.Name `xml:"UsernameToken"`
+	Username string   `xml:"Username"`
+	Password password `xml:"Password"`
+	Nonce    nonce    `xml:"Nonce"`
+	Created  string   `xml:"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd Created"`
 }
 
 /*
