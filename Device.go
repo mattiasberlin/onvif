@@ -6,6 +6,7 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"github.com/IOTechSystems/onvif/xsd/onvif"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -16,7 +17,6 @@ import (
 	"github.com/IOTechSystems/onvif/device"
 	"github.com/IOTechSystems/onvif/gosoap"
 	"github.com/IOTechSystems/onvif/networking"
-	"github.com/IOTechSystems/onvif/xsd/onvif"
 	"github.com/beevik/etree"
 )
 
@@ -104,6 +104,7 @@ func (dev *Device) GetServices() map[string]string {
 	return dev.endpoints
 }
 
+// GetServices return available endpoints
 func (dev *Device) GetDeviceInfo() DeviceInfo {
 	return dev.info
 }
@@ -146,11 +147,9 @@ func NewDevice(params DeviceParams) (*Device, error) {
 	getCapabilities := device.GetCapabilities{Category: []onvif.CapabilityCategory{"All"}}
 
 	resp, err := dev.CallMethod(getCapabilities)
-	if err != nil {
-		return nil, fmt.Errorf("camera is not available at %s or it does not support ONVIF services: %w", dev.params.Xaddr, err)
-	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("unexpected status %s", resp.Status)
+
+	if err != nil || resp.StatusCode != http.StatusOK {
+		return nil, errors.New("camera is not available at " + dev.params.Xaddr + " or it does not support ONVIF services")
 	}
 
 	dev.getSupportedServices(resp)
