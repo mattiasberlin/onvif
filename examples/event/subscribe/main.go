@@ -1,12 +1,11 @@
 package main
 
 import (
-	"io"
+	"github.com/IOTechSystems/onvif"
+	"github.com/IOTechSystems/onvif/event"
+	"github.com/IOTechSystems/onvif/xsd"
+	"io/ioutil"
 	"log"
-
-	"github.com/mattiasberlin/onvif"
-	"github.com/mattiasberlin/onvif/event"
-	"github.com/mattiasberlin/onvif/xsd"
 )
 
 // === Geovision ===
@@ -79,7 +78,7 @@ import (
 //  3. The response's reference address is invalid, renew request will fail
 
 func main() {
-	dev := onvif.NewDevice(onvif.DeviceParams{
+	dev, err := onvif.NewDevice(onvif.DeviceParams{
 		Xaddr: "192.168.12.148", // BOSCH
 		//Xaddr:    "192.168.12.149", // Geovision
 		//Xaddr: "192.168.12.123", //Hikvision
@@ -87,9 +86,8 @@ func main() {
 		Password: "Password1!",
 		AuthMode: onvif.UsernameTokenAuth,
 	})
-	err := dev.GetSupportedServices()
 	if err != nil {
-		log.Fatalln("fail to get supported services:", err)
+		log.Fatalln("fail to new device:", err)
 	}
 
 	consumerAddress := event.AttributedURIType("http://192.168.12.112:8080/ping")
@@ -106,7 +104,7 @@ func main() {
 		log.Fatalln("fail to CallMethod:", err)
 	}
 	log.Printf(">> Status Code: %+v \n", res.StatusCode)
-	bs, _ := io.ReadAll(res.Body)
+	bs, _ := ioutil.ReadAll(res.Body)
 
 	log.Printf(">> Result: %+v \n %s", res.StatusCode, bs)
 }

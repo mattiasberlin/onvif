@@ -1,23 +1,21 @@
 package main
 
 import (
+	"github.com/IOTechSystems/onvif"
+	"github.com/IOTechSystems/onvif/event"
 	"io/ioutil"
 	"log"
-
-	"github.com/mattiasberlin/onvif"
-	"github.com/mattiasberlin/onvif/event"
 )
 
 func main() {
-	dev := onvif.NewDevice(onvif.DeviceParams{
+	dev, err := onvif.NewDevice(onvif.DeviceParams{
 		Xaddr: "192.168.12.148", // BOSCH
 		//Xaddr:    "192.168.12.149", // Geovision
 		Username: "administrator",
 		Password: "Password1!",
 	})
-	err := dev.GetSupportedServices()
 	if err != nil {
-		log.Fatalln("fail to get supported services:", err)
+		log.Fatalln("fail to new device:", err)
 	}
 	// CreateUsers
 	res, err := dev.CallMethod(event.GetEventProperties{})

@@ -1,6 +1,6 @@
 package topic
 
-import "github.com/mattiasberlin/onvif/xsd"
+import "github.com/IOTechSystems/onvif/xsd"
 
 type MessageDescription struct {
 	IsProperty xsd.Boolean `xml:"IsProperty,attr"`

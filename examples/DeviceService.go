@@ -2,14 +2,14 @@ package main
 
 import (
 	"fmt"
-	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 
-	goonvif "github.com/mattiasberlin/onvif"
-	"github.com/mattiasberlin/onvif/device"
-	"github.com/mattiasberlin/onvif/gosoap"
-	"github.com/mattiasberlin/onvif/xsd/onvif"
+	goonvif "github.com/IOTechSystems/onvif"
+	"github.com/IOTechSystems/onvif/device"
+	"github.com/IOTechSystems/onvif/gosoap"
+	"github.com/IOTechSystems/onvif/xsd/onvif"
 )
 
 const (
@@ -18,7 +18,7 @@ const (
 )
 
 func readResponse(resp *http.Response) string {
-	b, err := io.ReadAll(resp.Body)
+	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		panic(err)
 	}
@@ -26,13 +26,16 @@ func readResponse(resp *http.Response) string {
 }
 
 func main() {
-	// Getting a camera instance
-	dev := goonvif.NewDevice(goonvif.DeviceParams{
+	//Getting an camera instance
+	dev, err := goonvif.NewDevice(goonvif.DeviceParams{
 		Xaddr:      "192.168.13.14:80",
 		Username:   login,
 		Password:   password,
 		HttpClient: new(http.Client),
 	})
+	if err != nil {
+		panic(err)
+	}
 
 	//Preparing commands
 	UserLevel := onvif.UserLevel("User")
@@ -66,7 +69,7 @@ func main() {
 		log.Println(err)
 	} else {
 		/*
-			You could use https://github.com/mattiasberlin/onvif/gosoap for pretty printing response
+			You could use https://github.com/IOTechSystems/onvif/gosoap for pretty printing response
 		*/
 		fmt.Println(gosoap.SoapMessage(readResponse(createUserResponse)).StringIndent())
 	}

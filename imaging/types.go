@@ -3,8 +3,8 @@ package imaging
 //go:generate python3 ../python/gen_commands.py
 
 import (
-	"github.com/mattiasberlin/onvif/xsd"
-	"github.com/mattiasberlin/onvif/xsd/onvif"
+	"github.com/IOTechSystems/onvif/xsd"
+	"github.com/IOTechSystems/onvif/xsd/onvif"
 )
 
 type GetServiceCapabilities struct {

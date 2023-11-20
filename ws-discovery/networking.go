@@ -22,9 +22,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/IOTechSystems/onvif"
 	"github.com/beevik/etree"
 	"github.com/google/uuid"
-	"github.com/mattiasberlin/onvif"
 	"golang.org/x/net/ipv4"
 )
 
@@ -79,20 +79,16 @@ func DevicesFromProbeResponses(probeResponses []string) ([]onvif.Device, error) 
 				endpointRefAddress = uuidElements[len(uuidElements)-1]
 			}
 
-			dev := onvif.NewDevice(onvif.DeviceParams{
+			dev, err := onvif.NewDevice(onvif.DeviceParams{
 				Xaddr:              xaddr,
 				EndpointRefAddress: endpointRefAddress,
 				HttpClient: &http.Client{
 					Timeout: 2 * time.Second,
 				},
 			})
-
-			var scopes []string
-			ref := probeMatch.FindElement("./Scopes")
-			if ref != nil {
-				scopes = strings.Split(ref.Text(), " ")
+			if err != nil {
+				continue
 			}
-			dev.SetDeviceInfoFromScopes(scopes)
 
 			xaddrSet[xaddr] = struct{}{}
 			nvtDevices = append(nvtDevices, *dev)

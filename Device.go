@@ -6,18 +6,18 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"reflect"
 	"strconv"
 	"strings"
 
+	"github.com/IOTechSystems/onvif/device"
+	"github.com/IOTechSystems/onvif/gosoap"
+	"github.com/IOTechSystems/onvif/networking"
+	"github.com/IOTechSystems/onvif/xsd/onvif"
 	"github.com/beevik/etree"
-	"github.com/mattiasberlin/onvif/device"
-	"github.com/mattiasberlin/onvif/gosoap"
-	"github.com/mattiasberlin/onvif/networking"
-	"github.com/mattiasberlin/onvif/xsd/onvif"
 )
 
 // Xlmns XML Scheam
@@ -73,7 +73,6 @@ func (devType DeviceType) String() string {
 
 // DeviceInfo struct contains general information about ONVIF device
 type DeviceInfo struct {
-	Name            string
 	Manufacturer    string
 	Model           string
 	FirmwareVersion string
@@ -109,35 +108,8 @@ func (dev *Device) GetDeviceInfo() DeviceInfo {
 	return dev.info
 }
 
-// SetDeviceInfoFromScopes goes through the scopes and sets the device info fields for supported categories.
-func (dev *Device) SetDeviceInfoFromScopes(scopes []string) {
-	newInfo := dev.info
-	supportedScopes := []struct {
-		category string
-		setField func(s string)
-	}{
-		{category: "name", setField: func(s string) { newInfo.Name = s }},
-		{category: "hardware", setField: func(s string) { newInfo.Model = s }},
-	}
-
-	for _, s := range scopes {
-		for _, supp := range supportedScopes {
-			fullScope := fmt.Sprintf("onvif://www.onvif.org/%s/", supp.category)
-			split := strings.SplitN(s, fullScope, 2)
-			if len(split) == 2 {
-				unescaped, err := url.QueryUnescape(split[1])
-				if err != nil {
-					continue
-				}
-				supp.setField(unescaped)
-			}
-		}
-	}
-	dev.info = newInfo
-}
-
 func readResponse(resp *http.Response) string {
-	b, err := io.ReadAll(resp.Body)
+	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		panic(err)
 	}
@@ -147,7 +119,7 @@ func readResponse(resp *http.Response) string {
 func (dev *Device) getSupportedServices(resp *http.Response) {
 	doc := etree.NewDocument()
 
-	data, _ := io.ReadAll(resp.Body)
+	data, _ := ioutil.ReadAll(resp.Body)
 
 	if err := doc.ReadFromBytes(data); err != nil {
 		//log.Println(err.Error())
@@ -160,7 +132,7 @@ func (dev *Device) getSupportedServices(resp *http.Response) {
 }
 
 // NewDevice function construct a ONVIF Device entity
-func NewDevice(params DeviceParams) *Device {
+func NewDevice(params DeviceParams) (*Device, error) {
 	dev := new(Device)
 	dev.params = params
 	dev.endpoints = make(map[string]string)
@@ -171,23 +143,18 @@ func NewDevice(params DeviceParams) *Device {
 	}
 	dev.digestClient = NewDigestClient(dev.params.HttpClient, dev.params.Username, dev.params.Password)
 
-	return dev
-}
-
-// GetSupportedServices from the device and set the supported endpoints.
-func (dev *Device) GetSupportedServices() error {
 	getCapabilities := device.GetCapabilities{Category: []onvif.CapabilityCategory{"All"}}
 
 	resp, err := dev.CallMethod(getCapabilities)
 	if err != nil {
-		return fmt.Errorf("camera is not available at %s or it does not support ONVIF services: %w", dev.params.Xaddr, err)
+		return nil, fmt.Errorf("camera is not available at %s or it does not support ONVIF services: %w", dev.params.Xaddr, err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("unexpected status %s", resp.Status)
+		return nil, fmt.Errorf("unexpected status %s", resp.Status)
 	}
 
 	dev.getSupportedServices(resp)
-	return nil
+	return dev, nil
 }
 
 func (dev *Device) addEndpoint(Key, Value string) {
@@ -358,7 +325,7 @@ func (dev *Device) CallOnvifFunction(serviceName, functionName string, data []by
 	}
 	defer servResp.Body.Close()
 
-	rsp, err := io.ReadAll(servResp.Body)
+	rsp, err := ioutil.ReadAll(servResp.Body)
 	if err != nil {
 		return nil, err
 	}

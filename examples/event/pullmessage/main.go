@@ -2,12 +2,11 @@ package main
 
 import (
 	"encoding/xml"
-	"io"
+	"github.com/IOTechSystems/onvif"
+	"github.com/IOTechSystems/onvif/event"
+	"github.com/IOTechSystems/onvif/xsd"
+	"io/ioutil"
 	"log"
-
-	"github.com/mattiasberlin/onvif"
-	"github.com/mattiasberlin/onvif/event"
-	"github.com/mattiasberlin/onvif/xsd"
 )
 
 // === Geovision ===
@@ -55,10 +54,9 @@ import (
 //  </tev:PullMessagesResponse>
 //
 // Test Summary:
-//
 //	the TerminationTime increase ten minutes
 func main() {
-	dev := onvif.NewDevice(onvif.DeviceParams{
+	dev, err := onvif.NewDevice(onvif.DeviceParams{
 		Xaddr: "192.168.12.148", // BOSCH
 		//Xaddr:    "192.168.12.149", // Geovision
 		//Xaddr: "192.168.12.123", //Hikvision
@@ -66,9 +64,8 @@ func main() {
 		Password: "Password1!",
 		AuthMode: onvif.UsernameTokenAuth,
 	})
-	err := dev.GetSupportedServices()
 	if err != nil {
-		log.Fatalln("failed to get supported services:", err)
+		log.Fatalln("fail to new device:", err)
 	}
 
 	pullMessage := event.PullMessages{
@@ -85,9 +82,9 @@ func main() {
 	}
 	res, err := dev.SendSoap(endPoint, string(requestBody))
 	if err != nil {
-		log.Fatalln("failed to CallMethod:", err)
+		log.Fatalln("fail to CallMethod:", err)
 	}
-	bs, _ := io.ReadAll(res.Body)
+	bs, _ := ioutil.ReadAll(res.Body)
 
 	log.Printf(">> Result: %+v \n %s", res.StatusCode, bs)
 }

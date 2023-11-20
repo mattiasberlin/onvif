@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"net/http"
 
-	"github.com/mattiasberlin/onvif"
-	"github.com/mattiasberlin/onvif/gosoap"
-	"github.com/mattiasberlin/onvif/networking"
+	"github.com/IOTechSystems/onvif"
+	"github.com/IOTechSystems/onvif/gosoap"
+	"github.com/IOTechSystems/onvif/networking"
 
 	"github.com/gin-gonic/gin"
 )
@@ -34,7 +34,7 @@ func RunApi() {
 		if err != nil {
 			fmt.Println(err)
 		}
-		dev := onvif.NewDevice(onvif.DeviceParams{
+		dev, err := onvif.NewDevice(onvif.DeviceParams{
 			Xaddr:    xaddr,
 			Username: username,
 			Password: pass,
@@ -84,7 +84,7 @@ func CallOnvifFunction(dev *onvif.Device, serviceName, functionName, acceptedDat
 		return "", err
 	}
 
-	rsp, err := io.ReadAll(servResp.Body)
+	rsp, err := ioutil.ReadAll(servResp.Body)
 	if err != nil {
 		return "", err
 	}

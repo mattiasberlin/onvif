@@ -2,17 +2,17 @@ package main
 
 import (
 	"encoding/json"
-	"io"
+	"io/ioutil"
 	"log"
 	"path"
 	"regexp"
 	"strings"
 	"testing"
 
+	"github.com/IOTechSystems/onvif"
+	"github.com/IOTechSystems/onvif/device"
+	wsdiscovery "github.com/IOTechSystems/onvif/ws-discovery"
 	"github.com/beevik/etree"
-	"github.com/mattiasberlin/onvif"
-	"github.com/mattiasberlin/onvif/device"
-	wsdiscovery "github.com/mattiasberlin/onvif/ws-discovery"
 )
 
 func TestGetAvailableDevicesAtSpecificEthernetInterface(t *testing.T) {
@@ -25,12 +25,15 @@ func TestGetAvailableDevicesAtSpecificEthernetInterface(t *testing.T) {
 }
 
 func client() {
-	dev := onvif.NewDevice(onvif.DeviceParams{Xaddr: "192.168.3.10", Username: "admin", Password: "zsyy12345"})
+	dev, err := onvif.NewDevice(onvif.DeviceParams{Xaddr: "192.168.3.10", Username: "admin", Password: "zsyy12345"})
+	if err != nil {
+		panic(err)
+	}
 
 	log.Printf("output %+v", dev.GetServices())
 
 	res, _ := dev.CallMethod(device.GetUsers{})
-	bs, _ := io.ReadAll(res.Body)
+	bs, _ := ioutil.ReadAll(res.Body)
 	log.Printf("output %+v %s", res.StatusCode, bs)
 }
 

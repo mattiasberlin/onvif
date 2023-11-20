@@ -3,19 +3,19 @@ package api
 import (
 	"errors"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"net/http"
 	"path"
 	"reflect"
 	"regexp"
 	"strings"
 
+	"github.com/IOTechSystems/onvif"
+	"github.com/IOTechSystems/onvif/gosoap"
+	"github.com/IOTechSystems/onvif/networking"
+	wsdiscovery "github.com/IOTechSystems/onvif/ws-discovery"
 	"github.com/beevik/etree"
 	"github.com/gin-gonic/gin"
-	"github.com/mattiasberlin/onvif"
-	"github.com/mattiasberlin/onvif/gosoap"
-	"github.com/mattiasberlin/onvif/networking"
-	wsdiscovery "github.com/mattiasberlin/onvif/ws-discovery"
 )
 
 func RunApi() {
@@ -152,7 +152,7 @@ func callNecessaryMethod(serviceName, methodName, acceptedData, username, passwo
 		return "", err
 	}
 
-	rsp, err := io.ReadAll(servResp.Body)
+	rsp, err := ioutil.ReadAll(servResp.Body)
 	if err != nil {
 		return "", err
 	}
@@ -161,7 +161,10 @@ func callNecessaryMethod(serviceName, methodName, acceptedData, username, passwo
 }
 
 func getEndpoint(service, xaddr string) (string, error) {
-	dev := onvif.NewDevice(onvif.DeviceParams{Xaddr: xaddr})
+	dev, err := onvif.NewDevice(onvif.DeviceParams{Xaddr: xaddr})
+	if err != nil {
+		return "", err
+	}
 	pkg := strings.ToLower(service)
 
 	var endpoint string
