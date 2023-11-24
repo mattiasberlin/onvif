@@ -50,6 +50,7 @@ func RunApi() {
 		interfaceName := context.GetHeader("interface")
 
 		var response = "["
+		// TODO: Handle this error.
 		devices, _ := wsdiscovery.SendProbe(interfaceName, nil, []string{"dn:NetworkVideoTransmitter"}, map[string]string{"dn": "http://www.onvif.org/ver10/network/wsdl"})
 
 		for _, j := range devices {

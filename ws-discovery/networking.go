@@ -59,17 +59,20 @@ func DevicesFromProbeResponses(probeResponses []string) ([]onvif.Device, error) 
 		if err := doc.ReadFromString(j); err != nil {
 			return nil, err
 		}
+
 		probeMatches := doc.Root().FindElements("./Body/ProbeMatches/ProbeMatch")
 		for _, probeMatch := range probeMatches {
 			var xaddr string
 			if address := probeMatch.FindElement("./XAddrs"); address != nil {
 				u, err := url.Parse(address.Text())
 				if err != nil {
+					// TODO: Add logger for fmt.Printf("Invalid XAddrs: %s\n", address.Text())
 					continue
 				}
 				xaddr = u.Host
 			}
 			if _, dupe := xaddrSet[xaddr]; dupe {
+				// TODO: Add logger for fmt.Printf("Skipping duplicate XAddr: %s\n", xaddr)
 				continue
 			}
 
@@ -87,11 +90,13 @@ func DevicesFromProbeResponses(probeResponses []string) ([]onvif.Device, error) 
 				},
 			})
 			if err != nil {
+				// TODO: Add logger for fmt.Printf("Failed to connect to camera at %s: %s\n", xaddr, err.Error())
 				continue
 			}
 
 			xaddrSet[xaddr] = struct{}{}
 			nvtDevices = append(nvtDevices, *dev)
+			// TODO: Add logger for fmt.Printf("Onvif WS-Discovery: Find Xaddr: %-25s EndpointRefAddress: %s\n", xaddr, string(endpointRefAddress))
 		}
 	}
 
