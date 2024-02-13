@@ -6,7 +6,6 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"github.com/IOTechSystems/onvif/xsd/onvif"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -14,9 +13,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/IOTechSystems/onvif/device"
-	"github.com/IOTechSystems/onvif/gosoap"
 	"github.com/beevik/etree"
+	"github.com/mattiasberlin/onvif/device"
+	"github.com/mattiasberlin/onvif/gosoap"
+	"github.com/mattiasberlin/onvif/xsd/onvif"
 )
 
 // Xlmns XML Scheam
@@ -125,9 +125,9 @@ func (dev *Device) SetDeviceInfoFromScopes(scopes []string) {
 	for _, s := range scopes {
 		for _, supp := range supportedScopes {
 			fullScope := fmt.Sprintf("onvif://www.onvif.org/%s/", supp.category)
-			scopeValue, matchesScope := strings.CutPrefix(s, fullScope)
-			if matchesScope {
-				unescaped, err := url.QueryUnescape(scopeValue)
+			splitScope := strings.SplitN(s, fullScope, 2)
+			if len(splitScope) == 2 {
+				unescaped, err := url.QueryUnescape(splitScope[1])
 				if err != nil {
 					continue
 				}

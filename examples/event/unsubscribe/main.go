@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/xml"
-	"github.com/IOTechSystems/onvif"
-	"github.com/IOTechSystems/onvif/event"
+	"github.com/mattiasberlin/onvif"
+	"github.com/mattiasberlin/onvif/event"
 	"io/ioutil"
 	"log"
 )

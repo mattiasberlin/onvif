@@ -1,4 +1,4 @@
-module github.com/IOTechSystems/onvif
+module github.com/mattiasberlin/onvif
 
 go 1.21
 
