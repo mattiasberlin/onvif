@@ -3,13 +3,13 @@ module github.com/mattiasberlin/onvif
 go 1.19
 
 require (
-	github.com/beevik/etree v1.3.0
+	github.com/beevik/etree v1.4.0
 	github.com/clbanning/mxj/v2 v2.7.0
-	github.com/elgs/gostrgen v0.0.0-20161222160715-9d61ae07eeae
+	github.com/elgs/gostrgen v0.0.0-20220325073726-0c3e00d082f6
 	github.com/gin-gonic/gin v1.9.1
 	github.com/google/uuid v1.6.0
-	github.com/stretchr/testify v1.8.4
-	golang.org/x/net v0.20.0
+	github.com/stretchr/testify v1.9.0
+	golang.org/x/net v0.25.0
 )
 
 require (
@@ -33,9 +33,9 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	golang.org/x/arch v0.3.0 // indirect
-	golang.org/x/crypto v0.18.0 // indirect
-	golang.org/x/sys v0.16.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/crypto v0.23.0 // indirect
+	golang.org/x/sys v0.20.0 // indirect
+	golang.org/x/text v0.15.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
